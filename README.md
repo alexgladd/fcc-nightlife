@@ -1,4 +1,6 @@
-# MERN Starter for Heroku
+# Nightlife Coordination App
 
-This repo serves as a starting point for a basic full stack MongoDB, Express,
-React, and Node.js (MERN) app.
+This app was created as part of the [freeCodeCamp](https://freecodecamp.com/)
+curriculum.
+
+This app uses the [Yelp Fusion API](https://www.yelp.com/developers/documentation/v3).
