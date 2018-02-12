@@ -29,7 +29,7 @@ const processBars = async (bars, date) => {
         url: yBar.url,
         imgUrl: yBar.image_url
       },
-      event: (Object.keys(events).includes(yBar.id)) ? events[yBar.id] : null
+      event: (Object.keys(events).includes(yBar.id)) ? events[yBar.id].toEventResponse() : null
     }));
   } catch(err) {
     console.error('Failure correlating bars to events', err);

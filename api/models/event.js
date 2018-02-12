@@ -13,7 +13,7 @@ const barSchema = new mongoose.Schema({
 });
 
 const attendeeSchema = new mongoose.Schema({
-  userId:      { type: ObjectId, required: true, unique: true, get: i => i.toString() },
+  userId:      { type: ObjectId, required: true, get: i => i.toString() },
   userName:    { type: String, required: true },
   userImgUrl:  { type: String }
 }, {
@@ -26,6 +26,15 @@ const eventSchema = new mongoose.Schema({
   attendees: [ attendeeSchema ]
 });
 
-eventSchema.index({ 'date': -1, 'bar.id': 1 });
+eventSchema.index({ 'date': -1, 'bar.id': 1 }, { unique: true });
+
+eventSchema.methods.toEventResponse = function() {
+  return {
+    id: this.id,
+    date: this.date,
+    bar: this.bar,
+    attendees: this.attendees
+  };
+}
 
 module.exports = mongoose.model('Event', eventSchema);

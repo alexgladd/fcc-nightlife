@@ -6,5 +6,6 @@ const router = Router();
 require('./auth')(router);
 require('./state')(router);
 require('./bars')(router);
+require('./event')(router);
 
 module.exports = router;
