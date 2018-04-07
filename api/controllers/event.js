@@ -43,8 +43,35 @@ exports.attendEvent = async (req, res) => {
   }
 }
 
-exports.absentEvent = async (req, res) => {
-  res.status(501).json({ errorMessage: 'Not implemented' });
+exports.skipEvent = async (req, res) => {
+  const { authUser, event } = req;
+  const skipReducer = (acc, attendee) => {
+    if (attendee.userId === authUser.id) {
+      // don't add this one
+      return acc;
+    } else {
+      acc.push(attendee);
+      return acc;
+    }
+  }
+
+  try {
+    if (!event) {
+      // invalid request
+      res.status(400).json({ errorMessage: 'Must specify event to skip' });
+    } else {
+      // remove the user and update event
+      const updatedAttendees = event.attendees.reduce(skipReducer, []);
+      event.attendees = updatedAttendees;
+
+      const uEvent = await event.save();
+
+      res.status(204).end();
+    }
+  } catch(err) {
+    console.error('Failed to remove attendee from event', err);
+    res.status(500).json({ errorMessage: 'Could not remove user from event' });
+  }
 }
 
 exports.getUserEvents = async (req, res) => {

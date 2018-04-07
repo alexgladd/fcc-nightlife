@@ -9,7 +9,7 @@ const setupEventRoutes = (router) => {
     .all(auth.authenticateUser, auth.authorizeUser)
     .get(EventController.getUserEvents)
     .post(evt.retrieveEvent, EventController.attendEvent)
-    .delete(evt.retrieveEvent, EventController.absentEvent);
+    .delete(evt.retrieveEvent, EventController.skipEvent);
 }
 
 module.exports = setupEventRoutes;
