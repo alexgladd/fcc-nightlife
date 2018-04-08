@@ -3,10 +3,17 @@ import { Switch, Route, Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { logoutUser } from '../actions/user';
 import CssBaseline from 'material-ui/CssBaseline';
+import { withStyles } from 'material-ui/styles';
 import Header from '../components/Header';
 import AuthHome from '../components/AuthHome';
 import Login from '../components/Login';
 import Profile from '../components/Profile';
+
+const styles = theme => ({
+  appContent: {
+    margin: theme.spacing.unit * 4
+  }
+});
 
 const PublicHome = () => (
   <div>
@@ -24,32 +31,34 @@ const FourOhFour = () => (
 
 class App extends React.Component {
   render() {
-    const { user, logout, history } = this.props;
+    const { classes, user, logout, history } = this.props;
 
     return (
-      <div className="App">
+      <div>
         <CssBaseline />
         
         <Header user={user} onLogout={() => { logout(); history.push('/'); }} />
 
-        <Switch>
-          { // home route
-            user ?
-            <Route exact path="/" render={props => (<AuthHome user={user} {...props} />)} /> :
-            <Route exact path="/" component={PublicHome} />
-          }
+        <div className={classes.appContent}>
+          <Switch>
+            { // home route
+              user ?
+              <Route exact path="/" render={props => (<AuthHome user={user} {...props} />)} /> :
+              <Route exact path="/" component={PublicHome} />
+            }
 
-          { /* login and oauth routes */ }
-          <Route path="/login/:network?" component={Login} />
+            { /* login and oauth routes */ }
+            <Route path="/login/:network?" component={Login} />
 
-          { // profile route
-            user &&
-            <Route exact path="/profile" render={props => (<Profile user={user} {...props} />)} />
-          }
+            { // profile route
+              user &&
+              <Route exact path="/profile" render={props => (<Profile user={user} {...props} />)} />
+            }
 
-          { /* no match route */ }
-          <Route component={FourOhFour} />
-        </Switch>
+            { /* no match route */ }
+            <Route component={FourOhFour} />
+          </Switch>
+        </div>
       </div>
     );
   }
@@ -63,4 +72,4 @@ const mapDispatchToProps = (dispatch) => ({
   logout() { dispatch(logoutUser()); }
 });
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(App));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(App)));

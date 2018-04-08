@@ -2,9 +2,12 @@ import React from 'react';
 import { Redirect } from 'react-router';
 import QueryString from 'query-string';
 import { connect } from 'react-redux';
+import Grid from 'material-ui/Grid';
+import Typography from 'material-ui/Typography';
 import LoginButton from './LoginButton';
 import { oauthAuthenticate } from '../actions/user';
 import oauth from '../util/oauth';
+
 
 class Login extends React.Component {
   constructor(props) {
@@ -12,7 +15,6 @@ class Login extends React.Component {
 
     this.state = {
       oauthButtons: [
-        oauth.clients.github,
         oauth.clients.facebook
       ]
     };
@@ -60,11 +62,21 @@ class Login extends React.Component {
       return <Redirect to="/" />;
     } else {
       return (
-        <div>
-          <h2>Login</h2>
-          <p>Click below to log in with your preferred network!</p>
-          { this.renderLoginButtons() }
-        </div>
+        <Grid container direction="column" alignItems="center" spacing={16}>
+          <Grid item xs={12}>
+            <Typography variant="headline" color="inherit">
+              Login
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography color="inherit">
+              Log in with Facebook to let people know you're attending an event!
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            { this.renderLoginButtons() }
+          </Grid>
+        </Grid>
       );
     }
   }
