@@ -2,11 +2,11 @@ import React from 'react';
 import { Switch, Route, Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { logoutUser } from '../actions/user';
+import CssBaseline from 'material-ui/CssBaseline';
 import Header from '../components/Header';
 import AuthHome from '../components/AuthHome';
 import Login from '../components/Login';
 import Profile from '../components/Profile';
-import './App.css';
 
 const PublicHome = () => (
   <div>
@@ -28,9 +28,9 @@ class App extends React.Component {
 
     return (
       <div className="App">
+        <CssBaseline />
+        
         <Header user={user} onLogout={() => { logout(); history.push('/'); }} />
-
-        <hr/>
 
         <Switch>
           { // home route

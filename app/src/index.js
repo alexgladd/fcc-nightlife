@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter as Router } from 'react-router-dom';
 import App from './containers/App';
 import registerServiceWorker from './registerServiceWorker';
-import './index.css';
 
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
