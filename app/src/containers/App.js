@@ -3,9 +3,10 @@ import { Switch, Route, Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { logoutUser } from '../actions/user';
 import CssBaseline from 'material-ui/CssBaseline';
+import Typography from 'material-ui/Typography';
 import { withStyles } from 'material-ui/styles';
+import Home from './Home';
 import Header from '../components/Header';
-import AuthHome from '../components/AuthHome';
 import Login from '../components/Login';
 import Profile from '../components/Profile';
 
@@ -15,17 +16,14 @@ const styles = theme => ({
   }
 });
 
-const PublicHome = () => (
-  <div>
-    <h2>Unauthenticated Home</h2>
-    <p>This is the public homepage that shows up for unauthenticated users</p>
-  </div>
-)
-
 const FourOhFour = () => (
   <div>
-    <h2>Whoops...</h2>
-    <p>Looks like you're lost! Click <Link to="/">here</Link> to go home.</p>
+    <Typography variant="headline" color="inherit">
+      Whoops...
+    </Typography>
+    <Typography color="inherit">
+      Looks like you're lost! Click <Link to="/">here</Link> to go home.
+    </Typography>
   </div>
 )
 
@@ -41,11 +39,8 @@ class App extends React.Component {
 
         <div className={classes.appContent}>
           <Switch>
-            { // home route
-              user ?
-              <Route exact path="/" render={props => (<AuthHome user={user} {...props} />)} /> :
-              <Route exact path="/" component={PublicHome} />
-            }
+            { /* home route */ }
+            <Route exact path="/" render={props => (<Home user={user} {...props} />)} />
 
             { /* login and oauth routes */ }
             <Route path="/login/:network?" component={Login} />
