@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Redirect } from 'react-router';
 import QueryString from 'query-string';
 import { connect } from 'react-redux';
@@ -81,6 +82,10 @@ class Login extends React.Component {
     }
   }
 }
+
+Login.propTypes = {
+  classes: PropTypes.object.isRequired
+};
 
 const mapStateToProps = (state) => ({
   user: state.user,
