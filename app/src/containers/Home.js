@@ -1,10 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import moment from 'moment';
 import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import TextField from 'material-ui/TextField';
 import Button from 'material-ui/Button';
 import NightlifeEvent from '../components/NightlifeEvent';
+import { nightlifeSearch } from '../actions/search';
 
 const styles = {
   search: {
@@ -17,14 +20,24 @@ class Home extends React.Component {
     super(props);
 
     this.state = {
-      location: ''
+      location: '',
+      date: moment().format('YYYY-MM-DD')
     };
 
     this.handleLocChange = this.handleLocChange.bind(this);
+    this.handleSearch = this.handleSearch.bind(this);
   }
 
   handleLocChange(event) {
     this.setState({ location: event.target.value });
+  }
+
+  handleSearch() {
+    this.props.searchForNightlife(this.state.location, this.state.date);
+  }
+
+  componentDidMount() {
+    this.setState({ location: this.props.searchLocation });
   }
 
   render() {
@@ -41,7 +54,8 @@ class Home extends React.Component {
               value={location} onChange={this.handleLocChange}/>
           </Grid>
           <Grid item xs={4} sm={2}>
-            <Button variant="raised" color="secondary" fullWidth={true}>
+            <Button variant="raised" color="secondary" fullWidth={true}
+              disabled={location.length < 1} onClick={this.handleSearch}>
               Search
             </Button>
           </Grid>
@@ -49,9 +63,6 @@ class Home extends React.Component {
 
         {/* search results */}
         <Grid container justify="center" spacing={16}>
-          <NightlifeEvent />
-          <NightlifeEvent />
-          <NightlifeEvent />
           <NightlifeEvent />
           <NightlifeEvent />
           <NightlifeEvent />
@@ -66,4 +77,13 @@ Home.propTypes = {
   user: PropTypes.object
 };
 
-export default withStyles(styles)(Home);
+const mapStateToProps = (state) => ({
+  searchLocation: state.search.location,
+  searchResults: state.search.results
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  searchForNightlife(location, date) { dispatch(nightlifeSearch(location, date)); }
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(Home));

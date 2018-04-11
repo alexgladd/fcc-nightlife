@@ -26,19 +26,23 @@ const oauthAuthenticate = async (network, code, extras) => {
   return await apiRequest(`/api/authenticate/${network}`, init);
 }
 
-// example api endpoints (remove)
-const getAuthenticatedExample = async (token) => {
-  return await apiRequest('/api/example', buildAuthInit(token));
+const getBarsForLocation = async (location, date) => {
+  return await apiRequest(`/api/bars?location=${encodeURIComponent(location)}&date=${encodeURIComponent(date)}`,
+    buildInit());
 }
 
-const getAuthorizedExample = async (user) => {
-  return await apiRequest(`/api/user/${user.id}/example`, buildAuthInit(user.token));
-}
+// example api endpoints (remove)
+// const getAuthenticatedExample = async (token) => {
+//   return await apiRequest('/api/example', buildAuthInit(token));
+// }
+
+// const getAuthorizedExample = async (user) => {
+//   return await apiRequest(`/api/user/${user.id}/example`, buildAuthInit(user.token));
+// }
 // example api endpoints (remove)
 
 export default {
   getServerState,
   oauthAuthenticate,
-  getAuthenticatedExample,
-  getAuthorizedExample
+  getBarsForLocation
 };
