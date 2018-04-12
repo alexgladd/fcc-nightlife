@@ -26,6 +26,7 @@ class Home extends React.Component {
 
     this.handleLocChange = this.handleLocChange.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
+    this.renderNightlifeCard = this.renderNightlifeCard.bind(this);
   }
 
   handleLocChange(event) {
@@ -40,8 +41,26 @@ class Home extends React.Component {
     this.setState({ location: this.props.searchLocation });
   }
 
+  renderNightlifeCard(result, idx) {
+    const { user } = this.props;
+
+    if (user && result.event && result.event.attendees.findIndex(a => a.userId === user.id) >= 0) {
+      // current user is attending this event
+      return (
+        <NightlifeEvent attending bar={result.bar} event={result.event} key={idx}
+          onClick={() => console.log('Skipping!')} />
+      );
+    } else {
+      // current user is not attending this event
+      return (
+        <NightlifeEvent bar={result.bar} event={result.event ? result.event : null} key={idx}
+          onClick={() => console.log('Attending!')} />
+      );
+    }
+  }
+
   render() {
-    const { classes, user } = this.props;
+    const { classes, searchResults } = this.props;
     const { location } = this.state;
 
     return (
@@ -63,9 +82,7 @@ class Home extends React.Component {
 
         {/* search results */}
         <Grid container justify="center" spacing={16}>
-          <NightlifeEvent />
-          <NightlifeEvent />
-          <NightlifeEvent />
+          { searchResults.map(this.renderNightlifeCard) }
         </Grid>
       </div>
     );

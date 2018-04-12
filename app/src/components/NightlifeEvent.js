@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
@@ -13,8 +14,16 @@ import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import { faYelp } from '@fortawesome/fontawesome-free-brands';
 
 const styles = theme => ({
+  card: {
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100%'
+  },
   cardImg: {
     height: 200
+  },
+  content: {
+    flexGrow: 1
   },
   avatars: {
     display: 'flex'
@@ -23,6 +32,9 @@ const styles = theme => ({
     margin: theme.spacing.unit / 2,
     width: 32,
     height: 32
+  },
+  actions: {
+    position: 'static'
   },
   badge: {
     margin: 16
@@ -33,30 +45,50 @@ const styles = theme => ({
 });
 
 const NighlifeEvent = ({ classes, attending, onClick, bar, event }) => {
+  const createAvatar = (attendee, idx) => {
+    if (attendee.userImgUrl) {
+      return (
+        <Tooltip enterDelay={250} placement="bottom" title={attendee.userName} key={idx}>
+          <Avatar alt={attendee.userName} className={classes.avatar} src={attendee.userImgUrl} />
+        </Tooltip>
+      );
+    } else {
+      return (
+        <Tooltip enterDelay={250} placement="bottom" title={attendee.userName} key={idx}>
+          <Avatar className={classes.avatar}>
+            { attendee.userName.split(' ').reduce((acc, val) => acc.concat(val[0].toUpperCase()), '') }
+          </Avatar>
+        </Tooltip>
+      );
+    }
+  }
+
   return (
     <Grid item xs={12} sm={6} md={4} lg={3}>
-      <Card>
+      <Card className={classes.card}>
         <CardMedia className={classes.cardImg}
-          image="https://s3-media2.fl.yelpcdn.com/bphoto/9gxoAlEOcbg8OeuB66YFWg/o.jpg"
-          title="Bar"/>
-        <CardContent>
+          image={bar.imgUrl}
+          title={bar.name}/>
+        <CardContent className={classes.content}>
           <Typography variant="title" gutterBottom>
-            Boatyard Bar & Grill
+            {bar.name}
           </Typography>
           <div className={classes.avatars}>
-            <Tooltip enterDelay={250} placement="bottom" title="Alex Gladd">
-              <Avatar alt="Alex Gladd" className={classes.avatar} src="https://scontent.xx.fbcdn.net/v/t1.0-1/p50x50/18813472_10113938906985554_5728429872298731284_n.jpg?oh=2a0df32ef4eece40f49e153f58f9dad8&oe=5ADCD68F" />
-            </Tooltip>
-            <Tooltip enterDelay={250} placement="bottom" title="John Smith">
-              <Avatar className={classes.avatar}>JS</Avatar>
-            </Tooltip>
+            { event && event.attendees.map(createAvatar) }
           </div>
         </CardContent>
-        <CardActions>
-          <Badge color="secondary" badgeContent={6}>
-            <Button size="small" color="default">I can't make it</Button>
-          </Badge>
-          <IconButton className={classes.yelpBtn}>
+        <CardActions className={classes.actions}>
+          { attending ?
+            <Badge color="secondary" badgeContent={event ? event.attendees.length : 0}>
+              <Button size="small" color="default" onClick={onClick}>I can't make it</Button>
+            </Badge> :
+            <Badge color="primary" badgeContent={event ? event.attendees.length : 0}>
+              <Button size="small" color="primary" onClick={onClick}>I'll be there!</Button>
+            </Badge>
+          }
+          
+          <IconButton className={classes.yelpBtn} component={Link} to={bar.url}
+            target="_blank" rel="noopener noreferrer">
             <FontAwesomeIcon icon={faYelp}/>
           </IconButton>
         </CardActions>
@@ -65,12 +97,12 @@ const NighlifeEvent = ({ classes, attending, onClick, bar, event }) => {
   );
 }
 
-// NighlifeEvent.propTypes = {
-//   classes: PropTypes.object.isRequired,
-//   attending: PropTypes.bool.isRequired,
-//   onClick: PropTypes.func.isRequired,
-//   bar: PropTypes.object.isRequired,
-//   event: PropTypes.object
-// };
+NighlifeEvent.propTypes = {
+  classes: PropTypes.object.isRequired,
+  onClick: PropTypes.func.isRequired,
+  bar: PropTypes.object.isRequired,
+  attending: PropTypes.bool,
+  event: PropTypes.object
+};
 
 export default withStyles(styles)(NighlifeEvent);
