@@ -1,7 +1,7 @@
 // api abstraction
 // use native fetch for requests
 
-import { buildInit, buildAuthInit, apiRequest } from './apihelpers';
+import { buildInit, /*buildAuthInit,*/ apiRequest } from './apihelpers';
 
 // request server state
 const getServerState = async () => {
