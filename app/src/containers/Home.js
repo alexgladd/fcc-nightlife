@@ -9,11 +9,14 @@ import Button from 'material-ui/Button';
 import NightlifeEvent from '../components/NightlifeEvent';
 import { nightlifeSearch } from '../actions/search';
 
-const styles = {
+const styles = theme => ({
   search: {
+    marginBottom: theme.spacing.unit * 3
+  },
+  searchInput: {
     width: '100%'
   }
-};
+});
 
 class Home extends React.Component {
   constructor(props) {
@@ -66,10 +69,10 @@ class Home extends React.Component {
     return (
       <div>
         {/* search controls */}
-        <Grid container justify="space-around" alignItems="baseline" spacing={16}>
+        <Grid container justify="space-around" alignItems="baseline" spacing={16} className={classes.search}>
           <Grid item xs={8} sm={8}>
             <TextField id="nightlife-loc" label="Search for nightlife"
-              placeholder="Enter your location" margin="normal" className={classes.search}
+              placeholder="Enter your location" margin="normal" className={classes.searchInput}
               value={location} onChange={this.handleLocChange}/>
           </Grid>
           <Grid item xs={4} sm={2}>
