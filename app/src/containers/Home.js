@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import moment from 'moment';
 import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
@@ -8,6 +9,7 @@ import TextField from 'material-ui/TextField';
 import Button from 'material-ui/Button';
 import NightlifeEvent from '../components/NightlifeEvent';
 import { nightlifeSearch } from '../actions/search';
+import { Typography } from 'material-ui';
 
 const styles = theme => ({
   search: {
@@ -15,6 +17,9 @@ const styles = theme => ({
   },
   searchInput: {
     width: '100%'
+  },
+  loginNotice: {
+    textAlign: 'center'
   }
 });
 
@@ -57,13 +62,14 @@ class Home extends React.Component {
       // current user is not attending this event
       return (
         <NightlifeEvent bar={result.bar} event={result.event ? result.event : null} key={idx}
+          disabled={user ? false : true}
           onClick={() => console.log('Attending!')} />
       );
     }
   }
 
   render() {
-    const { classes, searchResults } = this.props;
+    const { classes, user, searchResults } = this.props;
     const { location } = this.state;
 
     return (
@@ -81,6 +87,14 @@ class Home extends React.Component {
               Search
             </Button>
           </Grid>
+
+          { !user &&
+            <Grid item xs={12}>
+              <Typography variant="subheading" color="error" className={classes.loginNotice}>
+                <Link to="/login">Log in</Link> to let others know where you'll be tonight!
+              </Typography>
+            </Grid>
+          }
         </Grid>
 
         {/* search results */}

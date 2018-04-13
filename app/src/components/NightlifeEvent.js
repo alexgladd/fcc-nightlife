@@ -44,7 +44,7 @@ const styles = theme => ({
   }
 });
 
-const NighlifeEvent = ({ classes, attending, onClick, bar, event }) => {
+const NighlifeEvent = ({ classes, disabled, attending, onClick, bar, event }) => {
   const createAvatar = (attendee, idx) => {
     if (attendee.userImgUrl) {
       return (
@@ -80,10 +80,10 @@ const NighlifeEvent = ({ classes, attending, onClick, bar, event }) => {
         <CardActions className={classes.actions}>
           { attending ?
             <Badge color="secondary" badgeContent={event ? event.attendees.length : 0}>
-              <Button size="small" color="default" onClick={onClick}>I can't make it</Button>
+              <Button size="small" color="default" disabled={disabled} onClick={onClick}>I can't make it</Button>
             </Badge> :
             <Badge color="primary" badgeContent={event ? event.attendees.length : 0}>
-              <Button size="small" color="primary" onClick={onClick}>I'll be there!</Button>
+              <Button size="small" color="primary" disabled={disabled} onClick={onClick}>I'll be there!</Button>
             </Badge>
           }
           
@@ -101,6 +101,7 @@ NighlifeEvent.propTypes = {
   classes: PropTypes.object.isRequired,
   onClick: PropTypes.func.isRequired,
   bar: PropTypes.object.isRequired,
+  disabled: PropTypes.bool,
   attending: PropTypes.bool,
   event: PropTypes.object
 };
