@@ -13,7 +13,7 @@ const defaultState = {
 const searchReducer = (state=defaultState, action) => {
   switch(action.type) {
     case SearchActions.start:
-      return { location: action.location, date: action.date, results: [], status: action.status };
+      return { ...state, location: action.location, date: action.date, status: action.status };
     
     case SearchActions.results:
       return { ...state, results: action.results, status: action.status };
