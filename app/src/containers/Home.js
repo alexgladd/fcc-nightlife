@@ -7,9 +7,10 @@ import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import TextField from 'material-ui/TextField';
 import Button from 'material-ui/Button';
+import Snackbar from 'material-ui/Snackbar';
+import Typography from 'material-ui/Typography';
 import NightlifeEvent from '../components/NightlifeEvent';
-import { nightlifeSearch } from '../actions/search';
-import { Typography } from 'material-ui';
+import { SearchStatus, nightlifeSearch } from '../actions/search';
 
 const styles = theme => ({
   search: {
@@ -29,7 +30,9 @@ class Home extends React.Component {
 
     this.state = {
       location: '',
-      date: moment().format('YYYY-MM-DD')
+      date: moment().format('YYYY-MM-DD'),
+      searching: false,
+      showError: false
     };
 
     this.handleLocChange = this.handleLocChange.bind(this);
@@ -42,11 +45,27 @@ class Home extends React.Component {
   }
 
   handleSearch() {
+    this.setState({ searching: true });
     this.props.searchForNightlife(this.state.location, this.state.date);
   }
 
   componentDidMount() {
     this.setState({ location: this.props.searchLocation });
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { searchStatus } = this.props;
+    const { searching } = this.state;
+
+    if (searching && searchStatus !== SearchStatus.requested) {
+      let newState = { searching: false };
+
+      if (searchStatus === SearchStatus.error) {
+        newState = { ...newState, showError: true };
+      }
+
+      this.setState(newState);
+    }
   }
 
   renderNightlifeCard(result, idx) {
@@ -70,7 +89,7 @@ class Home extends React.Component {
 
   render() {
     const { classes, user, searchResults } = this.props;
-    const { location } = this.state;
+    const { location, searching, showError } = this.state;
 
     return (
       <div>
@@ -83,7 +102,7 @@ class Home extends React.Component {
           </Grid>
           <Grid item xs={4} sm={2}>
             <Button variant="raised" color="secondary" fullWidth={true}
-              disabled={location.length < 1} onClick={this.handleSearch}>
+              disabled={searching || location.length < 1} onClick={this.handleSearch}>
               Search
             </Button>
           </Grid>
@@ -101,6 +120,11 @@ class Home extends React.Component {
         <Grid container justify="center" spacing={16}>
           { searchResults.map(this.renderNightlifeCard) }
         </Grid>
+
+        {/* error snackbar */}
+        <Snackbar open={showError} anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+          autoHideDuration={4000} onClose={() => this.setState({ showError: false })}
+          message="Sorry, there was a problem searching for nightlife" />
       </div>
     );
   }
@@ -113,7 +137,8 @@ Home.propTypes = {
 
 const mapStateToProps = (state) => ({
   searchLocation: state.search.location,
-  searchResults: state.search.results
+  searchResults: state.search.results,
+  searchStatus: state.search.status
 });
 
 const mapDispatchToProps = (dispatch) => ({
