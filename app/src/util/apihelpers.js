@@ -28,7 +28,10 @@ export const buildAuthInit = (token, init={}, extraHeaders={}) => {
 export const apiRequest = async (path, init) => {
   try {
     const response = await fetch(path, init);
-    if (response.ok) {
+    if (response.status === 204) {
+      // no content
+      return {};
+    } else if (response.ok) {
       return await response.json();
     } else if (response.status >= 400 && response.status <= 500) {
       const error = await response.json();
