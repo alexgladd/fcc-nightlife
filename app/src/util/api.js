@@ -1,7 +1,7 @@
 // api abstraction
 // use native fetch for requests
 
-import { buildInit, /*buildAuthInit,*/ apiRequest } from './apihelpers';
+import { buildInit, buildAuthInit, apiRequest } from './apihelpers';
 
 // request server state
 const getServerState = async () => {
@@ -31,18 +31,34 @@ const getBarsForLocation = async (location, date) => {
     buildInit());
 }
 
-// example api endpoints (remove)
-// const getAuthenticatedExample = async (token) => {
-//   return await apiRequest('/api/example', buildAuthInit(token));
-// }
+const postAttendingEvent = async (user, body) => {
+  const init = buildAuthInit(user.token, {
+    method: 'POST',
+    body: JSON.stringify(body)
+  });
 
-// const getAuthorizedExample = async (user) => {
-//   return await apiRequest(`/api/user/${user.id}/example`, buildAuthInit(user.token));
-// }
-// example api endpoints (remove)
+  return await apiRequest(`/api/user/${user.id}/attendee`, init);
+}
+
+const deleteAttendingEvent = async (user, event) => {
+  const body = {
+    event: {
+      id: event.id
+    }
+  };
+
+  const init = buildAuthInit(user.token, {
+    method: 'DELETE',
+    body: JSON.stringify(body)
+  });
+
+  return await apiRequest(`/api/user/${user.id}/attendee`, init);
+}
 
 export default {
   getServerState,
   oauthAuthenticate,
-  getBarsForLocation
+  getBarsForLocation,
+  postAttendingEvent,
+  deleteAttendingEvent
 };

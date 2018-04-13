@@ -11,6 +11,7 @@ import Snackbar from 'material-ui/Snackbar';
 import Typography from 'material-ui/Typography';
 import NightlifeEvent from '../components/NightlifeEvent';
 import { SearchStatus, nightlifeSearch } from '../actions/search';
+import api from '../util/api';
 
 const styles = theme => ({
   search: {
@@ -37,6 +38,8 @@ class Home extends React.Component {
 
     this.handleLocChange = this.handleLocChange.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
+    this.handleAttendClick = this.handleAttendClick.bind(this);
+    this.handleSkipClick = this.handleSkipClick.bind(this);
     this.renderNightlifeCard = this.renderNightlifeCard.bind(this);
   }
 
@@ -47,6 +50,39 @@ class Home extends React.Component {
   handleSearch() {
     this.setState({ searching: true });
     this.props.searchForNightlife(this.state.location, this.state.date);
+  }
+
+  handleAttendClick(bar, event, e) {
+    console.log('Attending!', bar, event);
+
+    e.target.parentElement.setAttribute('disabled', '');
+
+    let body;
+    if (event) {
+      body = { event: { id: event.id } };
+    } else {
+      body = { date: this.state.date, bar };
+    }
+
+    // api.postAttendingEvent(this.props.user, body).then(result => {
+    //   console.log('Attend request successful');
+    //   this.props.searchForNightlife(this.state.location, this.state.date);
+    // }).catch(err => {
+    //   console.error('Attend request error', err);
+    // });
+  }
+
+  handleSkipClick(event, e) {
+    console.log('Skipping!', event);
+
+    e.target.parentElement.setAttribute('disabled', '');
+
+    // api.deleteAttendingEvent(this.props.user, event).then(result => {
+    //   console.log('Skip request successful');
+    //   this.props.searchForNightlife(this.state.location, this.state.date);
+    // }).catch(err => {
+    //   console.error('Skip request error', err);
+    // });
   }
 
   componentDidMount() {
@@ -75,14 +111,14 @@ class Home extends React.Component {
       // current user is attending this event
       return (
         <NightlifeEvent attending bar={result.bar} event={result.event} key={idx}
-          onClick={() => console.log('Skipping!')} />
+          onClick={this.handleSkipClick} />
       );
     } else {
       // current user is not attending this event
       return (
         <NightlifeEvent bar={result.bar} event={result.event ? result.event : null} key={idx}
           disabled={user ? false : true}
-          onClick={() => console.log('Attending!')} />
+          onClick={this.handleAttendClick} />
       );
     }
   }
