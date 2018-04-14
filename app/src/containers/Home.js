@@ -84,7 +84,9 @@ class Home extends React.Component {
   }
 
   componentDidMount() {
-    this.setState({ location: this.props.searchLocation });
+    this.setState({ location: this.props.searchLocation }, () => {
+      if (this.props.searchResults.length === 0 && this.state.location.length > 0) this.handleSearch();
+    });
   }
 
   componentDidUpdate(prevProps, prevState) {
