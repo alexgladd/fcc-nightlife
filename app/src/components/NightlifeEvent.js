@@ -63,10 +63,6 @@ const NighlifeEvent = ({ classes, disabled, attending, onClick, bar, event }) =>
     }
   }
 
-  const handleClick = (e) => {
-    attending ? onClick(event, e) : onClick(bar, event, e);
-  }
-
   return (
     <Grid item xs={12} sm={6} md={4} lg={3}>
       <Card className={classes.card}>
@@ -84,10 +80,14 @@ const NighlifeEvent = ({ classes, disabled, attending, onClick, bar, event }) =>
         <CardActions className={classes.actions}>
           { attending ?
             <Badge color="secondary" badgeContent={event ? event.attendees.length : 0}>
-              <Button size="small" color="default" disabled={disabled} onClick={handleClick}>I can't make it</Button>
+              <Button size="small" color="default" disabled={disabled} onClick={() => onClick(bar, event)}>
+                I can't make it
+              </Button>
             </Badge> :
             <Badge color="primary" badgeContent={event ? event.attendees.length : 0}>
-              <Button size="small" color="primary" disabled={disabled} onClick={handleClick}>I'll be there!</Button>
+              <Button size="small" color="primary" disabled={disabled} onClick={() => onClick(bar, event)}>
+                I'll be there!
+              </Button>
             </Badge>
           }
           

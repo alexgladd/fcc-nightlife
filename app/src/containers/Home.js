@@ -33,7 +33,8 @@ class Home extends React.Component {
       location: '',
       date: moment().format('YYYY-MM-DD'),
       searching: false,
-      showError: false
+      showError: false,
+      barClicked: null
     };
 
     this.handleLocChange = this.handleLocChange.bind(this);
@@ -48,14 +49,11 @@ class Home extends React.Component {
   }
 
   handleSearch() {
-    this.setState({ searching: true });
     this.props.searchForNightlife(this.state.location, this.state.date);
   }
 
-  handleAttendClick(bar, event, e) {
-    console.log('Attending!', bar, event);
-
-    e.target.parentElement.setAttribute('disabled', '');
+  handleAttendClick(bar, event) {
+    this.setState({ barClicked: bar.id });
 
     let body;
     if (event) {
@@ -64,25 +62,25 @@ class Home extends React.Component {
       body = { date: this.state.date, bar };
     }
 
-    // api.postAttendingEvent(this.props.user, body).then(result => {
-    //   console.log('Attend request successful');
-    //   this.props.searchForNightlife(this.state.location, this.state.date);
-    // }).catch(err => {
-    //   console.error('Attend request error', err);
-    // });
+    api.postAttendingEvent(this.props.user, body).then(result => {
+      //console.log('Attend request successful');
+      this.handleSearch();
+    }).catch(err => {
+      console.error('Attend request error', err);
+      this.setState({ barClicked: null });
+    });
   }
 
-  handleSkipClick(event, e) {
-    console.log('Skipping!', event);
+  handleSkipClick(bar, event) {
+    this.setState({ barClicked: bar.id });
 
-    e.target.parentElement.setAttribute('disabled', '');
-
-    // api.deleteAttendingEvent(this.props.user, event).then(result => {
-    //   console.log('Skip request successful');
-    //   this.props.searchForNightlife(this.state.location, this.state.date);
-    // }).catch(err => {
-    //   console.error('Skip request error', err);
-    // });
+    api.deleteAttendingEvent(this.props.user, event).then(result => {
+      //console.log('Skip request successful');
+      this.handleSearch();
+    }).catch(err => {
+      console.error('Skip request error', err);
+      this.setState({ barClicked: null });
+    });
   }
 
   componentDidMount() {
@@ -93,8 +91,12 @@ class Home extends React.Component {
     const { searchStatus } = this.props;
     const { searching } = this.state;
 
-    if (searching && searchStatus !== SearchStatus.requested) {
-      let newState = { searching: false };
+    if (prevProps.searchStatus !== SearchStatus.requested && searchStatus === SearchStatus.requested) {
+      // search started
+      this.setState({ searching: true });
+    } else if (searching && searchStatus !== SearchStatus.requested) {
+      // search finished
+      let newState = { searching: false, barClicked: null };
 
       if (searchStatus === SearchStatus.error) {
         newState = { ...newState, showError: true };
@@ -106,18 +108,22 @@ class Home extends React.Component {
 
   renderNightlifeCard(result, idx) {
     const { user } = this.props;
+    const { barClicked } = this.state;
+    
+    const isClicked = barClicked === result.bar.id;
 
     if (user && result.event && result.event.attendees.findIndex(a => a.userId === user.id) >= 0) {
       // current user is attending this event
       return (
         <NightlifeEvent attending bar={result.bar} event={result.event} key={idx}
+          disabled={isClicked}
           onClick={this.handleSkipClick} />
       );
     } else {
       // current user is not attending this event
       return (
         <NightlifeEvent bar={result.bar} event={result.event ? result.event : null} key={idx}
-          disabled={user ? false : true}
+          disabled={isClicked || !user}
           onClick={this.handleAttendClick} />
       );
     }
