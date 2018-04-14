@@ -34,7 +34,7 @@ export const nightlifeSearch = (location, date) => {
     // run the search request
     try {
       const results = await api.getBarsForLocation(location, date);
-      console.log('Got bar search results', results);
+      //console.log('Got bar search results', results);
       dispatch(searchResults(results, SearchStatus.received));
     } catch(err) {
       console.error('Nightlife search error', err);
