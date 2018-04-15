@@ -10,6 +10,7 @@ import Button from 'material-ui/Button';
 import Snackbar from 'material-ui/Snackbar';
 import Typography from 'material-ui/Typography';
 import NightlifeEvent from '../components/NightlifeEvent';
+import Footer from '../components/Footer';
 import { SearchStatus, nightlifeSearch } from '../actions/search';
 import api from '../util/api';
 
@@ -164,6 +165,9 @@ class Home extends React.Component {
         <Grid container justify="center" spacing={16}>
           { searchResults.map(this.renderNightlifeCard) }
         </Grid>
+
+        {/* footer */}
+        <Footer />
 
         {/* error snackbar */}
         <Snackbar open={showError} anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
